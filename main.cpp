@@ -13,6 +13,10 @@ unsigned int hashFunction1(std::string value){
     return hash_value % TABLE_CAPACITY;
 }
 
+unsigned int hashFunction2(std::string value){
+    unsigned int hash_value = 0;
+}
+
 // szablon ponieważ będą 3 różne funkcje haszowania
 template <typename HashFunction>
 unsigned int hash(std::string value, HashFunction H){
@@ -51,9 +55,37 @@ struct HashTable{
     }
 
     void remove(std::string s){
+        unsigned int index = hash(s, hashFunction1);
 
+        if(table[index] == nullptr){
+            std::cout<<"No such element"<<std::endl;
+            return;
+        }
+
+        if(table[index]->value == s){
+            Entry* temp = table[index];
+            table[index] = table[index]->next;
+            delete temp;
+            size--;
+            return;
+        }
+
+        Entry* prev = nullptr;
+        Entry* current = table[index];
+
+        while(current != nullptr){
+            if(current->value == s){
+                prev->next = current->next;
+                delete current;
+                size--;
+                break;
+            } else {
+                prev = current;
+                current = current->next;
+            }
+        }
+        return;
     }
-
 };
 
 int main(){
