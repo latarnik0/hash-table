@@ -3,28 +3,8 @@
 
 constexpr int TABLE_CAPACITY = 10;
 
-// ===== HASHING FUNCTIONS =====
-unsigned int hashFunction1(std::string value){
-    unsigned int hash_value = 0;
-    for(int i=0; i<value.length(); ++i){
-        hash_value += value[i];
-        hash_value *= value[i] - i;
-    }
-    return hash_value % TABLE_CAPACITY;
-}
-
-unsigned int hashFunction2(std::string value){
-    unsigned int hash_value = 0;
-}
-
-// szablon ponieważ będą 3 różne funkcje haszowania
-template <typename HashFunction>
-unsigned int hash(std::string value, HashFunction H){
-    // TODO
-    return 0;
-}
-
-// ======== STRUCTS ========
+// ======= HASH TABLE =======
+// --- single node ---
 struct Entry{
     std::string value;
     Entry* next;
@@ -35,6 +15,8 @@ struct Entry{
     }
 };
 
+// --- main Hash Table ---
+template <typename HashFunction>
 struct HashTable{
     int size;
     Entry* table[TABLE_CAPACITY];
@@ -47,7 +29,8 @@ struct HashTable{
     }
 
     void insert(std::string s){
-        unsigned int index = hash(s, hashFunction1);
+        HashFunction hash;
+        unsigned int index = hash(s) % TABLE_CAPACITY;
         Entry* new_entry = new Entry(s);
         
         new_entry->next = table[index];
@@ -55,7 +38,8 @@ struct HashTable{
     }
 
     void remove(std::string s){
-        unsigned int index = hash(s, hashFunction1);
+        HashFunction hash;
+        unsigned int index = hash(s) % TABLE_CAPACITY;
 
         if(table[index] == nullptr){
             std::cout<<"No such element"<<std::endl;
@@ -88,6 +72,51 @@ struct HashTable{
     }
 };
 
+// ======= HASHING FUNCTIONS =======
+// --- simple custom hashing function ---
+struct simpleHash {
+    unsigned int operator()(std::string value){
+        unsigned int hash_value = 0;
+        for(int i=0; i<value.length(); ++i){
+            hash_value += value[i];
+            hash_value *= value[i] - i;
+        }
+        return hash_value;
+    }
+};
+
+// --- seed-based hashing function (djb2 algorithm) ---
+struct seedHash {
+    unsigned int operator()(std::string value){
+        unsigned int hash_value = 5381; // seed
+        for(char c : value){
+            hash_value = ((hash_value << 5) + hash_value) + c;
+        }
+        return hash_value;
+    }
+};
+
+// --- polynomial rolling hash ---
+struct polynomialHash {
+    unsigned int operator()(std::string &s){
+        unsigned int n = s.length();
+        unsigned int p = 31, m = 1e9 + 7;
+        unsigned int hash_value = 0;
+        unsigned int pPow = 1;
+
+        for(int i = 0; i < n; ++i){
+            hash_value = (hash_value + (s[i] - 'a' + 1) * pPow) % m;
+            pPow = (pPow * p) % m;
+        }
+        return hash_value;
+    }
+};
+
+
+
 int main(){
+    // HashTable<simpleHash> ht1;
+    // HashTable<seedHash> ht2;
+    // HashTable<polynomialHash> ht3;
     return 0;
 }
