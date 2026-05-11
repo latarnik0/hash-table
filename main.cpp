@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <chrono>
+#include <vector>
 
-constexpr int TABLE_CAPACITY = 10;
 
 // ======= HASH TABLE =======
 // --- single node ---
@@ -19,18 +21,35 @@ struct Entry{
 template <typename HashFunction>
 struct HashTable{
     int size;
-    Entry* table[TABLE_CAPACITY];
+    int capacity;
+    Entry* table;
 
-    HashTable() {
+    HashTable(int new_capacity) {
         size = 0;
-        for(int i=0; i < TABLE_CAPACITY; ++i){
+        capacity = new_capacity;
+
+        table = new Entry*[capacity];
+
+        for(int i=0; i < capacity; ++i){
             table[i] = nullptr;
         }
     }
 
+    ~HashTable() {
+        for (int i = 0; i < capacity; ++i) {
+            Entry* current = table[i];
+            while (current != nullptr) {
+                Entry* temp = current;
+                current = current->next;
+                delete temp;
+            }
+        }
+        delete[] table; 
+    }
+
     void insert(std::string s){
         HashFunction hash;
-        unsigned int index = hash(s) % TABLE_CAPACITY;
+        unsigned int index = hash(s) % capacity;
         Entry* new_entry = new Entry(s);
         
         new_entry->next = table[index];
@@ -39,7 +58,7 @@ struct HashTable{
 
     void remove(std::string s){
         HashFunction hash;
-        unsigned int index = hash(s) % TABLE_CAPACITY;
+        unsigned int index = hash(s) % capacity;
 
         if(table[index] == nullptr){
             std::cout<<"No such element"<<std::endl;
@@ -112,11 +131,25 @@ struct polynomialHash {
     }
 };
 
+std::string randomString(int len) {
+    const char alfabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    std::string result = "";
+    result.reserve(len);
+
+    for(int i = 0; i < len; ++i) {
+        result += alfabet[rand() % (sizeof(alfabet) - 1)];
+    }
+    return result;
+}
+
+void test(){
+    for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
+        HashTable<simpleHash> ht1(capacity);
+        
+    }
+}
 
 
 int main(){
-    // HashTable<simpleHash> ht1;
-    // HashTable<seedHash> ht2;
-    // HashTable<polynomialHash> ht3;
     return 0;
 }
