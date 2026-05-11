@@ -155,47 +155,55 @@ std::string randomString() {
     return result;
 }
 
-void test(){
-    srand(time(NULL));
-    long long SIMPLE_INS_TIME = 0, SIMPLE_REM_TIME = 0;
-    std::vector<double> fill_percentage = {0.02, 0.5, 0.99};
+// ======= TEST FUNCTION =======
+template <typename HashFunc>
+void testHashFunction(std::string hashAlgorithm) {
+    
+    std::vector<double> fill_percentage = {0.01, 0.5, 0.99};
     
     for(float f : fill_percentage){
         for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
-            HashTable<simpleHash> ht1(capacity);
+            
+            // 2. Tablica używa teraz typu z szablonu, a nie "simpleHash" na sztywno
+            HashTable<HashFunc> ht(capacity);
 
-            std::cout<<"--- | N = "<<capacity<<" | FILL = "<<f<<" | SIMPLE HASH| ---"<<std::endl;
+            // 3. Wypisujemy ładną nazwę algorytmu w nagłówku
+            std::cout << "\n--- | N = " << capacity << " | FILL = " << f << " | " << hashAlgorithm << " | ---" << std::endl;
 
             // filling the table
             std::vector<std::string> values;
             values.reserve(f * capacity);
 
-            for(int i=0; i < f*capacity; ++i) {
+            for(int i = 0; i < f * capacity; ++i) {
                 values.push_back(randomString());
             }
 
             // insert() time measure
             auto start = std::chrono::high_resolution_clock::now();
             for(int i = 0; i < values.size(); ++i){
-                ht1.insert(values[i]);
+                ht.insert(values[i]);
             }
             auto end = std::chrono::high_resolution_clock::now();
             double avg_ins = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / static_cast<double>(values.size());
-            std::cout<<"Avarage time INSERT operation (ns):  "<<avg_ins<<std::endl;
+            std::cout << "Average time INSERT operation (ns):  " << avg_ins << std::endl;
 
             // remove() time measure 
             auto startR = std::chrono::high_resolution_clock::now();
             for(int i = 0; i < values.size(); ++i){
-                ht1.remove(values[i]);
+                ht.remove(values[i]);
             }
             auto endR = std::chrono::high_resolution_clock::now();
             double avg_rem = std::chrono::duration_cast<std::chrono::nanoseconds>(endR - startR).count() / static_cast<double>(values.size());
-            std::cout<<"Avarage time REMOVE operation (ns):  "<<avg_rem<<std::endl;
-
+            std::cout << "Average time REMOVE operation (ns):  " << avg_rem << std::endl;
         }
     }
-    
-    
+}
+
+void test(){
+    //testHashFunction<stupidHash>("STUPID HASH");
+    testHashFunction<simpleHash>("SIMPLE HASH");
+    testHashFunction<seedHash>("DJB2 HASH");
+    testHashFunction<polynomialHash>("POLYNOMIAL ROLL HASH");
 }
 
 
