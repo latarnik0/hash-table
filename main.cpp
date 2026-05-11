@@ -23,7 +23,7 @@ template <typename HashFunction>
 struct HashTable{
     int size;
     int capacity;
-    Entry* table;
+    Entry** table;
 
     HashTable(int new_capacity) {
         size = 0;
@@ -93,6 +93,13 @@ struct HashTable{
 };
 
 // ======= HASHING FUNCTIONS =======
+// --- hashing function to test worst case ---
+struct stupidHash {
+    unsigned int operator()(std::string value){
+        return 0;
+    }
+};
+
 // --- simple custom hashing function ---
 struct simpleHash {
     unsigned int operator()(std::string value){
@@ -151,44 +158,48 @@ std::string randomString() {
 void test(){
     srand(time(NULL));
     long long SIMPLE_INS_TIME = 0, SIMPLE_REM_TIME = 0;
+    std::vector<double> fill_percentage = {0.02, 0.5, 0.99};
+    
+    for(float f : fill_percentage){
+        for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
+            HashTable<simpleHash> ht1(capacity);
 
-    for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
-        HashTable<simpleHash> ht1(capacity);
+            std::cout<<"--- | N = "<<capacity<<" | FILL = "<<f<<" | SIMPLE HASH| ---"<<std::endl;
 
-        std::cout<<"--- | N = "<<capacity<<" | SIMPLE HASH | LOAD = 70% | ---"<<std::endl;
+            // filling the table
+            std::vector<std::string> values;
+            values.reserve(f * capacity);
 
-        // filling 70% of the table
-        std::vector<std::string> values;
-        values.reserve(0.7 * capacity);
+            for(int i=0; i < f*capacity; ++i) {
+                values.push_back(randomString());
+            }
 
-        for(int i=0; i < 0.7*capacity; ++i) {
-            values.push_back(randomString());
+            // insert() time measure
+            auto start = std::chrono::high_resolution_clock::now();
+            for(int i = 0; i < values.size(); ++i){
+                ht1.insert(values[i]);
+            }
+            auto end = std::chrono::high_resolution_clock::now();
+            double avg_ins = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / static_cast<double>(values.size());
+            std::cout<<"Avarage time INSERT operation (ns):  "<<avg_ins<<std::endl;
+
+            // remove() time measure 
+            auto startR = std::chrono::high_resolution_clock::now();
+            for(int i = 0; i < values.size(); ++i){
+                ht1.remove(values[i]);
+            }
+            auto endR = std::chrono::high_resolution_clock::now();
+            double avg_rem = std::chrono::duration_cast<std::chrono::nanoseconds>(endR - startR).count() / static_cast<double>(values.size());
+            std::cout<<"Avarage time REMOVE operation (ns):  "<<avg_rem<<std::endl;
+
         }
-
-        std::cout<<"Insert measure in progress..."<<std::endl;
-        // insert() time measure
-        auto start = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i < values.size(); ++i){
-            ht1.insert(values[i]);
-        }
-        auto end = std::chrono::high_resolution_clock::now();
-        double avg_ins = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / static_cast<double>(values.size());
-        std::cout<<"Avarage time INSERT operation (ns):  "<<avg_ins<<std::endl;
-
-        std::cout<<"Remove measure in progress..."<<std::endl;
-        // remove() time measure 
-        auto startR = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i <= values.size(); ++i){
-            ht1.remove(values[i]);
-        }
-        auto endR = std::chrono::high_resolution_clock::now();
-        double avg_rem = std::chrono::duration_cast<std::chrono::nanoseconds>(endR - startR).count() / static_cast<double>(values.size());
-        std::cout<<"Avarage time REMOVE operation (ns):  "<<avg_rem<<std::endl;
-
     }
+    
+    
 }
 
 
 int main(){
+    test();
     return 0;
 }
