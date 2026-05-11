@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <vector>
+#include <ctime>
 
 
 // ======= HASH TABLE =======
@@ -131,7 +132,12 @@ struct polynomialHash {
     }
 };
 
-std::string randomString(int len) {
+int randomLength(){
+    return rand() % 101;
+}
+
+std::string randomString() {
+    int len = randomLength();
     const char alfabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::string result = "";
     result.reserve(len);
@@ -143,9 +149,42 @@ std::string randomString(int len) {
 }
 
 void test(){
+    srand(time(NULL));
+    long long SIMPLE_INS_TIME = 0, SIMPLE_REM_TIME = 0;
+
     for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
         HashTable<simpleHash> ht1(capacity);
-        
+
+        std::cout<<"--- | N = "<<capacity<<" | SIMPLE HASH | LOAD = 70% | ---"<<std::endl;
+
+        // filling 70% of the table
+        std::vector<std::string> values;
+        values.reserve(0.7 * capacity);
+
+        for(int i=0; i < 0.7*capacity; ++i) {
+            values.push_back(randomString());
+        }
+
+        std::cout<<"Insert measure in progress..."<<std::endl;
+        // insert() time measure
+        auto start = std::chrono::high_resolution_clock::now();
+        for(int i = 0; i < values.size(); ++i){
+            ht1.insert(values[i]);
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double avg_ins = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / static_cast<double>(values.size());
+        std::cout<<"Avarage time INSERT operation (ns):  "<<avg_ins<<std::endl;
+
+        std::cout<<"Remove measure in progress..."<<std::endl;
+        // remove() time measure 
+        auto startR = std::chrono::high_resolution_clock::now();
+        for(int i = 0; i <= values.size(); ++i){
+            ht1.remove(values[i]);
+        }
+        auto endR = std::chrono::high_resolution_clock::now();
+        double avg_rem = std::chrono::duration_cast<std::chrono::nanoseconds>(endR - startR).count() / static_cast<double>(values.size());
+        std::cout<<"Avarage time REMOVE operation (ns):  "<<avg_rem<<std::endl;
+
     }
 }
 
