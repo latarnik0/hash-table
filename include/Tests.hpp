@@ -27,15 +27,13 @@ std::string randomString() {
 template <typename HashFunc>
 void testHashFunction(std::string hashAlgorithm) {
     
-    std::vector<double> fill_percentage = {0.01, 0.5, 0.99};
+    std::vector<double> fill_percentage = {0.99};
     
     for(float f : fill_percentage){
         for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
-            
-            // 2. Tablica używa teraz typu z szablonu, a nie "simpleHash" na sztywno
+        
             HashTable<HashFunc> ht(capacity);
 
-            // 3. Wypisujemy ładną nazwę algorytmu w nagłówku
             std::cout << "\n--- | N = " << capacity << " | FILL = " << f << " | " << hashAlgorithm << " | ---" << std::endl;
 
             // filling the table
@@ -68,8 +66,8 @@ void testHashFunction(std::string hashAlgorithm) {
 }
 
 void test(){
-    //testHashFunction<stupidHash>("STUPID HASH");
-    testHashFunction<simpleHash>("SIMPLE HASH");
-    testHashFunction<seedHash>("DJB2 HASH");
-    testHashFunction<polynomialHash>("POLYNOMIAL ROLL HASH");
+    testHashFunction<stupidHash>("STUPID HASH");
+    //testHashFunction<simpleHash>("SIMPLE HASH");
+    //testHashFunction<seedHash>("DJB2 HASH");
+    //testHashFunction<polynomialHash>("POLYNOMIAL ROLL HASH");
 }
