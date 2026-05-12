@@ -14,7 +14,7 @@ Implementation of a Hash Table from scratch in **C++**, using the chaining metho
 
 ## Computational complexity analysis
 
-Below are tables with the measurement results of individual operations in *nanoseconds*. The results in the tables are the average operation time per element. Measurements were taken across different table capacities (N) and various Load Factors (1%, 50%, 99%) to simulate best, average, and worst case scenarios. The worst case scenario is achived by another hash function called `Stupid Hash` which returns 0 for every value.
+Below are tables with the measurement results of individual operations in *nanoseconds*. The results in the tables are the average operation time per element. Measurements were taken across different table capacities (N) and various Load Factors (1%, 50%, 99%) to simulate best, average, and worst case scenarios.
 
 ### Adding elements (Insert)
 | N (Capacity) | Load Factor | Custom Hash | djb2 Hash | Polynomial Hash | Stupid Hash
@@ -57,12 +57,12 @@ Below are tables with the measurement results of individual operations in *nanos
 | **Searching for an element** | ***O(1)*** | ***O(1)*** | *O(N)* |
 
 #### Hash Table Architecture Summary
-The measurements are a direct result of the Hash Table's architecture. A hash table uses an array of pointers (buckets) to store data. When an operation is requested, the key (string) is passed through a hashing function, which mathematically calculates the exact memory index in constant time ***O(1)***. 
-In this implementation, collisions (when two different strings produce the same index) are resolved using **Chaining**. Each bucket is the `head` of a Singly Linked List. Therefore, inserting a new element is always ***O(1)*** because it is simply attached to the beginning of the list at the calculated index, regardless of the Load Factor.
+The measurements are a direct result of the Hash Table's architecture. A hash table uses an array of pointers to store data. When an operation is being done the key is passed through a hashing function, which mathematically calculates the exact memory index in constant time ***O(1)***. 
+In this implementation, when two different strings produce the same index it is solved by method called **Chaining**. Each spot in hash table (index) is the `head` of a Singly Linked List. Therefore inserting a new element is always ***O(1)*** because when collision occurs we add an element to the beggining of linked list. This operation is not influenced by the load factor of hash table.
 
-However, searching and removing elements require traversing the list at the given index. When the **Load Factor is low (e.g., 1%)**, collisions are extremely rare, resulting in instant ***O(1)*** complexity. At a **moderate Load Factor (50%)**, chains are still very short, maintaining near-constant time. As the **Load Factor approaches 100% (99%)**, the likelihood of collisions significantly increases. If the hash function fails to distribute data evenly, the table degrades into long linked lists, causing the computational complexity of the `remove()` operation to drop towards linear ***O(N)***.
+Removing elements require traversing the list at the given index. When the **Load Factor is low (e.g., 1%)**, collisions are extremely rare, resulting in instant ***O(1)*** complexity. At a **moderate Load Factor (50%)**, chains are still very short, maintaining near-constant time. As the **Load Factor approaches 100% (99%)**, the likelihood of collisions significantly increases. If the hash function fails to distribute data evenly, the table degrades into long linked lists, causing the computational complexity of the `remove()` operation to drop towards linear ***O(N)***. To illustrate the worst case scenario better there is another hash function called `Stupid Hash` which returns 0 for every value. As you can see in the table above it dramatically decreases performance to the said ***O(n)***.
 
 #### Hash Functions Summary
 The efficiency of removal operations heavily relies on the chosen hash function, especially at high Load Factors (99%). 
-Standard algorithms like **djb2** and **Polynomial Hash** use prime numbers and bitwise operations to ensure a uniform distribution of elements across all available buckets, keeping chains short even when the table is nearly full. 
-Custom algorithms that rely on simple addition or non-prime multiplication often fail to avoid mathematical patterns. This leads to clustering – leaving many buckets empty while creating massive chains in others, which dramatically increases the average time of the `remove()` operation as the Load Factor grows.
+Standard algorithms like **djb2** and **Polynomial Hash** use prime numbers and bitwise operations to ensure a uniform distribution of elements across all available indexes, keeping chains short even when the table is nearly full. 
+Custom algorithms that rely on simple addition or non-prime multiplication often fail to avoid mathematical patterns. This leads to clustering leaving many indexes empty while creating massive chains in others, which dramatically increases the average time of the `remove()` operation as the Load Factor grows.
