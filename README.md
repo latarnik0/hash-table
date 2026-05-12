@@ -14,43 +14,43 @@ Implementation of a Hash Table from scratch in **C++**, using the chaining metho
 
 ## Computational complexity analysis
 
-Below are tables with the measurement results of individual operations in *nanoseconds*. The results in the tables are the average operation time per element. Measurements were taken across different table capacities (N) and various Load Factors (1%, 50%, 99%) to simulate best, average, and near-worst case scenarios.
+Below are tables with the measurement results of individual operations in *nanoseconds*. The results in the tables are the average operation time per element. Measurements were taken across different table capacities (N) and various Load Factors (1%, 50%, 99%) to simulate best, average, and worst case scenarios. The worst case scenario is achived by another hash function called `Stupid Hash` which returns 0 for every value.
 
 ### Adding elements (Insert)
-| N (Capacity) | Load Factor | Custom Hash | djb2 Hash | Polynomial Hash |
-| :--- | :--- | :--- | :--- | :--- |
-| **1000** | 1% | 3010 | 2190 | 2240 |
-| | 50% | 2959.8 | 2330.8 | 2136.4 |
-| | 99% | 2835.15 | 2268.08 | 2125.45 |
-| **10000** | 1% | 2956 | 2297 | 2191 |
-| | 50% | 2932.88 | 2339.82 | 2265.76 |
-| | 99% | 2896.47 | 2316.01 | 2124.68 |
-| **100000** | 1% | 2872.1 | 2353.1 | 2066.1 |
-| | 50% | 2907.45 | 2348.75 | 2124.5 |
-| | 99% | 2866.1 | 2352.85 | 2126.96 |
-| **1000000** | 1% | 2977.89 | 2390.43 | 2190.74 |
-| | 50% | 2988.18 | 2383.21 | 2174.78 |
-| | 99% | 3005.03 | 2405.05 | 2174.92 |
+| N (Capacity) | Load Factor | Custom Hash | djb2 Hash | Polynomial Hash | Stupid Hash
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **1000** | 1% | 3010 | 2190 | 2240 | |
+| | 50% | 2959.8 | 2330.8 | 2136.4 | |
+| | 99% | 2835.15 | 2268.08 | 2125.45 | |
+| **10000** | 1% | 2956 | 2297 | 2191 | |
+| | 50% | 2932.88 | 2339.82 | 2265.76 | |
+| | 99% | 2896.47 | 2316.01 | 2124.68 | |
+| **100000** | 1% | 2872.1 | 2353.1 | 2066.1 | |
+| | 50% | 2907.45 | 2348.75 | 2124.5 | |
+| | 99% | 2866.1 | 2352.85 | 2126.96 | |
+| **1000000** | 1% | 2977.89 | 2390.43 | 2190.74 | |
+| | 50% | 2988.18 | 2383.21 | 2174.78 | |
+| | 99% | 3005.03 | 2405.05 | 2174.92 | |
 
 ### Removing elements (Remove)
-| N (Capacity) | Load Factor | Custom Hash | djb2 Hash | Polynomial Hash |
-| :--- | :--- | :--- | :--- | :--- |
-| **1000** | 1% | 2320 | 1770 | 1720 |
-| | 50% | 2589.6 | 1794.6 | 1425.2 |
-| | 99% | 2196.46 | 1663.43 | 1707.47 |
-| **10000** | 1% | 2180 | 1648 | 1665 |
-| | 50% | 2336.14 | 1712.84 | 1585.72 |
-| | 99% | 2504.02 | 1707.71 | 1561.4 |
-| **100000** | 1% | 2689.2 | 2135.9 | 1480.9 |
-| | 50% | 2348.54 | 2092.99 | 1649.4 |
-| | 99% | 2553.39 | 1762.04 | 1599.02 |
-| **1000000** | 1% | 2333.73 | 1730.26 | 1541.49 |
-| | 50% | 2893.96 | 1781.01 | 1611.43 |
-| | 99% | 3636.29 | 1812.68 | 1656.13 |
+| N (Capacity) | Load Factor | Custom Hash | djb2 Hash | Polynomial Hash | Stupid Hash |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **1000** | 1% | 2320 | 1770 | 1720 | |
+| | 50% | 2589.6 | 1794.6 | 1425.2 | |
+| | 99% | 2196.46 | 1663.43 | 1707.47 | |
+| **10000** | 1% | 2180 | 1648 | 1665 | |
+| | 50% | 2336.14 | 1712.84 | 1585.72 | |
+| | 99% | 2504.02 | 1707.71 | 1561.4 | |
+| **100000** | 1% | 2689.2 | 2135.9 | 1480.9 | |
+| | 50% | 2348.54 | 2092.99 | 1649.4 | |
+| | 99% | 2553.39 | 1762.04 | 1599.02 | |
+| **1000000** | 1% | 2333.73 | 1730.26 | 1541.49 | |
+| | 50% | 2893.96 | 1781.01 | 1611.43 | |
+| | 99% | 3636.29 | 1812.68 | 1656.13 | |
 
 ### Time Complexity of all operations
 
-| Operation | Best Case (Low Load/Good Hash) | Average Case (Mid Load) | Worst Case (High Load/Poor Hash) |
+| Operation | Best Case (Low Load/Good Hash) | Average Case (Mid Load) | Worst Case (High Load/Bad Hash) |
 | :--- | :--- | :--- | :--- |
 | **Adding an element** | ***O(1)*** | ***O(1)*** | ***O(1)*** |
 | **Removing an element** | ***O(1)*** | ***O(1)*** | *O(N)* |
