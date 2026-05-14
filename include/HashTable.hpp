@@ -3,24 +3,24 @@
 #include <iostream>
 
 // ======= HASH TABLE =======
-// --- single record ---
-struct Entry{
-    std::string value;
-    Entry* next;
-
-    Entry(std::string s){
-        value = s;
-        next = nullptr;
-    }
-};
-
-// --- main Hash Table ---
 template <typename HashFunction>
-struct HashTable{
+class HashTable{
+    // --- single record in table ---
+    struct Entry{
+        std::string value;
+        Entry* next;
+        
+        Entry(const std::string& s){
+            value = s;
+            next = nullptr;
+        }
+    };
+
     int size;
     int capacity;
     Entry** table;
 
+public:
     HashTable(int new_capacity) {
         size = 0;
         capacity = new_capacity;
@@ -44,16 +44,17 @@ struct HashTable{
         delete[] table; 
     }
 
-    void insert(std::string s){
+    void insert(const std::string& s){
         HashFunction hash;
         unsigned int index = hash(s) % capacity;
         Entry* new_entry = new Entry(s);
         
         new_entry->next = table[index];
         table[index] = new_entry;
+        size++;
     }
 
-    void remove(std::string s){
+    void remove(const std::string& s){
         HashFunction hash;
         unsigned int index = hash(s) % capacity;
 

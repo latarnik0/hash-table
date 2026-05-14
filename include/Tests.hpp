@@ -30,8 +30,7 @@ void testHashFunction(std::string hashAlgorithm) {
     std::vector<double> fill_percentage = {0.99};
     
     for(float f : fill_percentage){
-        for(int capacity = 1000; capacity <= 1000000; capacity *= 10){
-        
+        for(int capacity = 1000000; capacity <= 100000000; capacity *= 10){
             HashTable<HashFunc> ht(capacity);
 
             std::cout << "\n--- | N = " << capacity << " | FILL = " << f << " | " << hashAlgorithm << " | ---" << std::endl;
@@ -44,6 +43,7 @@ void testHashFunction(std::string hashAlgorithm) {
                 values.push_back(randomString());
             }
 
+            
             // insert() time measure
             auto start = std::chrono::high_resolution_clock::now();
             for(int i = 0; i < values.size(); ++i){
@@ -52,6 +52,7 @@ void testHashFunction(std::string hashAlgorithm) {
             auto end = std::chrono::high_resolution_clock::now();
             double avg_ins = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / static_cast<double>(values.size());
             std::cout << "Average time INSERT operation (ns):  " << avg_ins << std::endl;
+            
 
             // remove() time measure 
             auto startR = std::chrono::high_resolution_clock::now();
@@ -66,8 +67,8 @@ void testHashFunction(std::string hashAlgorithm) {
 }
 
 void test(){
-    testHashFunction<stupidHash>("STUPID HASH");
+    //testHashFunction<stupidHash>("STUPID HASH");
     //testHashFunction<simpleHash>("SIMPLE HASH");
-    //testHashFunction<seedHash>("DJB2 HASH");
-    //testHashFunction<polynomialHash>("POLYNOMIAL ROLL HASH");
+    testHashFunction<seedHash>("DJB2 HASH");
+    testHashFunction<polynomialHash>("POLYNOMIAL ROLL HASH");
 }
